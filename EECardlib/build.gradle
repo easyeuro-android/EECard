@@ -38,6 +38,7 @@ afterEvaluate {
                 artifactId = 'eecard'
                 version = '1.0.3'
             }
+
         }
     }
 }
