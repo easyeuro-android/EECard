@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "EECard"
 include ':EECardlib'
-//include ':localAar'
