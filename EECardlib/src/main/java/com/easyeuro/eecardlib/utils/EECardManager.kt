@@ -77,34 +77,6 @@ class EECardManager(
         )
     }
 
-//    private suspend fun getCard(
-//        accessToken: String,
-//        ckoCardId: String,
-//    ): Result<Card> = suspendCoroutine { continuation ->
-//        run {
-//            val manager = newCardManagement(mContext)
-//            val loginResult = manager.logInSession(accessToken)
-//            if (!loginResult) {
-//                continuation.resume(Result.failure(Throwable("Token error!")))
-//                return@run
-//            }
-//
-//            manager.getCards { result: Result<List<Card>> ->
-//                result.onSuccess {
-//                    val targetCard = getTargetCard(it, ckoCardId)
-//                    if (targetCard == null) {
-//                        continuation.resume(Result.failure(Throwable("Token error!")))
-//                        return@getCards
-//                    }
-//                    continuation.resume(Result.success(targetCard))
-//                }.onFailure {
-//                    continuation.resume(Result.failure(it))
-//                }
-//
-//            }
-//        }
-//
-//    }
     /**
      *
      * @param channelCardId: Start with "crd_"

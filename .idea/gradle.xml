@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/EECardlib" />
+            <option value="$PROJECT_DIR$/localAar" />
           </set>
         </option>
       </GradleProjectSettings>

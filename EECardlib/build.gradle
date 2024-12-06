@@ -42,9 +42,8 @@ afterEvaluate {
         }
     }
 }
+
 dependencies {
-    compileOnly files("libs/checkout-sdk-card-network-android-1.0.0.aar")
-    compileOnly files("libs/d1-release-2.2.0-18.aar")
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -54,6 +53,5 @@ dependencies {
     implementation "androidx.compose.ui:ui:1.5.4"
     implementation "androidx.compose.material:material:1.5.4"
     implementation('com.checkout:checkout-sdk-card-management-android:1.0.1')
-    implementation 'net.java.dev.jna:jna:5.9.0@aar'
     implementation("com.checkout:checkout-sdk-oob-android:1.0.0")
 }
