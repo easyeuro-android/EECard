@@ -36,7 +36,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.easyeuro-android'
                 artifactId = 'eecard'
-                version = '1.0.8'
+                version = '1.0.01'
             }
 
         }
@@ -54,4 +54,6 @@ dependencies {
     implementation "androidx.compose.material:material:1.5.4"
     implementation('com.checkout:checkout-sdk-card-management-android:1.0.1')
     implementation("com.checkout:checkout-sdk-oob-android:1.0.0")
+
+
 }
