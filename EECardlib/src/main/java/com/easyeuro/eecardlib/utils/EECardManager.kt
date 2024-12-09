@@ -79,11 +79,11 @@ class EECardManager(
 
     /**
      *
-     * @param channelCardId: Start with "crd_"
+     * @param cardId: Start with "crd_"
      * */
     fun initCard(
         accessToken: String,
-        channelCardId: String,
+        cardId: String,
         completionHandler: ValuelessCompletion,
     ) {
         scope.launch(Dispatchers.Default) {
@@ -97,7 +97,7 @@ class EECardManager(
 
             manager.getCards { result: Result<List<Card>> ->
                 result.onSuccess {
-                    val targetCard = getTargetCard(it, channelCardId)
+                    val targetCard = getTargetCard(it, cardId)
                     if (targetCard == null) {
                         completionHandler(Result.failure(Throwable(message = "Card does not exist!")))
                         return@getCards
@@ -308,8 +308,10 @@ class EECardManager(
     }
 
     /**
+     *
      * Handle the provision result.
      * Call in the 'onActivityResult' method of your Activity or Fragment class
+     *
      * */
     fun handleCardResult(
         requestCode: Int,
