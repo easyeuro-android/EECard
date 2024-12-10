@@ -69,16 +69,17 @@ class EEOobManager(
                 CardLocale.EN
             },
         )
-        scope.launch(Dispatchers.Default) {
-            oobManager.registerDevice(deviceRegistration)
-                .collect { result ->
-                    result.onSuccess {
-                        completionHandler(Result.success(Unit))
-                    }.onFailure {
-                        val message = provideErrorMessage(it)
-                        completionHandler(Result.failure(Throwable(message = message)))
-                    }
+        scope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.Default) {
+                oobManager.registerDevice(deviceRegistration)
+            }.collect { result ->
+                result.onSuccess {
+                    completionHandler(Result.success(Unit))
+                }.onFailure {
+                    val message = provideErrorMessage(it)
+                    completionHandler(Result.failure(Throwable(message = message)))
                 }
+            }
 
         }
     }
