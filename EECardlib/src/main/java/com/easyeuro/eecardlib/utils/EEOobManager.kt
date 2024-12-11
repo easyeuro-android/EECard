@@ -47,12 +47,12 @@ class EEOobManager(
     /**
      *
      * @param countryCode: Phone country code. Example: +33
-     * @param channelCardId: Start with "crd_"
+     * @param appCardId: Start with "crd_"
      * */
     fun registerDevice(
         accessToken: String,
         applicationId: String,
-        channelCardId: String,
+        appCardId: String,
         countryCode: String,
         phone: String,
         cardLocale: EECardLocal = EECardLocal.EN,
@@ -60,7 +60,7 @@ class EEOobManager(
     ) {
         val deviceRegistration = DeviceRegistration(
             token = accessToken,
-            cardId = channelCardId,
+            cardId = appCardId,
             applicationID = applicationId,
             phoneNumber = PhoneNumber(countryCode = countryCode, number = phone),
             cardLocale = if (cardLocale == EECardLocal.FR) {
@@ -86,7 +86,7 @@ class EEOobManager(
 
     fun authenticatePayment(
         accessToken: String,
-        channelCardId: String,
+        appCardId: String,
         transactionId: String,
         accept: Boolean,
         completionHandler: ValuelessCompletion
@@ -94,7 +94,7 @@ class EEOobManager(
         val authenticationRequest = Authentication(
             transactionId = transactionId,
             token = accessToken,
-            cardId = channelCardId,
+            cardId = appCardId,
             method = Method.OOB_BIOMETRICS,
             decision = if (accept) {
                 Decision.ACCEPTED

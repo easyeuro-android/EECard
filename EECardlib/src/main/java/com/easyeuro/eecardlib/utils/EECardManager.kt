@@ -79,11 +79,11 @@ class EECardManager(
 
     /**
      *
-     * @param cardId: Start with "crd_"
+     * @param appCardId: Start with "crd_"
      * */
     fun initCard(
         accessToken: String,
-        cardId: String,
+        appCardId: String,
         completionHandler: ValuelessCompletion,
     ) {
         scope.launch(Dispatchers.Default) {
@@ -97,7 +97,7 @@ class EECardManager(
 
             manager.getCards { result: Result<List<Card>> ->
                 result.onSuccess {
-                    val targetCard = getTargetCard(it, cardId)
+                    val targetCard = getTargetCard(it, appCardId)
                     if (targetCard == null) {
                         completionHandler(Result.failure(Throwable(message = "Card does not exist!")))
                         return@getCards
@@ -272,7 +272,7 @@ class EECardManager(
      * */
     fun provision(
         activity: android.app.Activity,
-        cardholderId: String,
+        appCardholderId: String,
         provisionToken: String,
         serviceRSAModulus:String,
         completionHandler: ValuelessCompletion
@@ -287,7 +287,7 @@ class EECardManager(
 
         card?.provision(
             activity = activity,
-            cardholderId = cardholderId,
+            cardholderId = appCardholderId,
             configuration = configuration,
             token = provisionToken,
             completionHandler = fun(result: Result<Unit>) {
