@@ -260,10 +260,10 @@ class EECardManager(
 
     }
 
-    private val serviceRSAExponent = "0x10001".toByteArray()
-    private val serviceURLPrd = "https://client-api.d1.thalescloud.io/"
-    private val digitalCardURLPrd = "https://hapi.dbp.thalescloud.io/mg/tpc/"
-    private val issuerID = "is_cko_oui"
+//    private val serviceRSAExponent = "0x10001".toByteArray()
+//    private val serviceURLPrd = "https://client-api.d1.thalescloud.io/"
+//    private val digitalCardURLPrd = "https://hapi.dbp.thalescloud.io/mg/tpc/"
+//    private val issuerID = "is_cko_oui"
 
     /**
      *
@@ -273,23 +273,23 @@ class EECardManager(
      * */
     fun provision(
         activity: android.app.Activity,
-        appCardholderId: String,
+     //   appCardholderId: String,
         provisionToken: String,
-        serviceRSAModulus:String,
+    //    serviceRSAModulus:String,
         completionHandler: ValuelessCompletion
     ) {
-        val configuration = ProvisioningConfiguration(
-            serviceRSAExponent = serviceRSAExponent,
-            serviceRSAModulus = serviceRSAModulus.toByteArray(),
-            serviceURL = serviceURLPrd,
-            digitalCardURL = digitalCardURLPrd,
-            issuerID = issuerID
-        )
+//        val configuration = ProvisioningConfiguration(
+//            serviceRSAExponent = serviceRSAExponent,
+//            serviceRSAModulus = serviceRSAModulus.toByteArray(),
+//            serviceURL = serviceURLPrd,
+//            digitalCardURL = digitalCardURLPrd,
+//            issuerID = issuerID
+//        )
 
         card?.provision(
             activity = activity,
-            cardholderId = appCardholderId,
-            configuration = configuration,
+//            cardholderID = appCardholderId,
+//            configuration = configuration,
             token = provisionToken,
             completionHandler = fun(result: Result<Unit>) {
                 Log.i("Provision result", result.toString())
