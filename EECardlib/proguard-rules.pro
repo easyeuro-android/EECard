@@ -24,4 +24,3 @@
 -keep class com.checkout.** { *; }
 # 忽略第三方SDK的警告
 -dontwarn com.checkout.**
--keep class com.easyeuro.** { *; }
