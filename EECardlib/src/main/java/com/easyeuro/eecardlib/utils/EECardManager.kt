@@ -260,11 +260,6 @@ class EECardManager(
 
     }
 
-//    private val serviceRSAExponent = "0x10001".toByteArray()
-//    private val serviceURLPrd = "https://client-api.d1.thalescloud.io/"
-//    private val digitalCardURLPrd = "https://hapi.dbp.thalescloud.io/mg/tpc/"
-//    private val issuerID = "is_cko_oui"
-
     /**
      *
      * Add card to google wallet
@@ -273,18 +268,62 @@ class EECardManager(
      * */
     fun provision(
         activity: android.app.Activity,
+        appCardholderId: String,
+        provisionToken: String,
+        serviceRSAModulus: String,
+        completionHandler: ValuelessCompletion
+    ) {
+        configCardManager(
+            activity = activity,
+            appCardholderId = appCardholderId,
+            serviceRSAModulus = serviceRSAModulus,
+            completionHandler = fun(result: Result<Unit>) {
+                Log.i("Provision config result", result.toString())
+                result.onSuccess {
+                    doProvision(activity, provisionToken, completionHandler)
+                }.onFailure {
+                    scope.launch(Dispatchers.Main) {
+                        completionHandler(Result.failure(it))
+                    }
+                }
+            })
+    }
+
+    private val serviceRSAExponent = "0x10001".toByteArray()
+    private val serviceURLPrd = "https://client-api.d1.thalescloud.io/"
+    private val digitalCardURLPrd = "https://hapi.dbp.thalescloud.io/mg/tpc/"
+    private val issuerID = "is_cko_oui"
+
+    private fun configCardManager(
+        activity: android.app.Activity,
+        appCardholderId: String,
+        serviceRSAModulus: String,
+        completionHandler: (Result<Unit>) -> Unit
+    ) {
+        val configuration = ProvisioningConfiguration(
+            serviceRSAExponent = serviceRSAExponent,
+            serviceRSAModulus = serviceRSAModulus.toByteArray(),
+            serviceURL = serviceURLPrd,
+            digitalCardURL = digitalCardURLPrd,
+            issuerID = issuerID
+        )
+        manager.configurePushProvisioning(
+            activity = activity,
+            cardholderId = appCardholderId,
+            configuration = configuration,
+            completionHandler = completionHandler
+        )
+    }
+
+
+    private fun doProvision(
+        activity: android.app.Activity,
         //   appCardholderId: String,
         provisionToken: String,
         //    serviceRSAModulus:String,
         completionHandler: ValuelessCompletion
     ) {
-//        val configuration = ProvisioningConfiguration(
-//            serviceRSAExponent = serviceRSAExponent,
-//            serviceRSAModulus = serviceRSAModulus.toByteArray(),
-//            serviceURL = serviceURLPrd,
-//            digitalCardURL = digitalCardURLPrd,
-//            issuerID = issuerID
-//        )
+
 
         card?.provision(
             activity = activity,

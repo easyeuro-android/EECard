@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 保护第三方SDK的所有类和方法
+-keep class com.checkout.** { *; }
+# 忽略第三方SDK的警告
+-dontwarn com.checkout.**
+-keep class com.easyeuro.** { *; }
