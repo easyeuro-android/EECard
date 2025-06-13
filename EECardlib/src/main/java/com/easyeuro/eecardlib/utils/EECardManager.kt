@@ -260,10 +260,59 @@ class EECardManager(
 
     }
 
+    private val serviceRSAExponent = "0x10001".toByteArray()
+    private val serviceURLPrd = "https://client-api.d1.thalescloud.io/"
+    private val digitalCardURLPrd = "https://hapi.dbp.thalescloud.io/mg/tpc/"
+    private val issuerID = "is_cko_oui"
+
+    fun configCardManager(
+        activity: android.app.Activity,
+        appCardholderId: String,
+        serviceRSAModulus: String,
+        completionHandler: (Result<Unit>) -> Unit
+    ) {
+        val configuration = ProvisioningConfiguration(
+            serviceRSAExponent = serviceRSAExponent,
+            serviceRSAModulus = serviceRSAModulus.toByteArray(),
+            serviceURL = serviceURLPrd,
+            digitalCardURL = digitalCardURLPrd,
+            issuerID = issuerID
+        )
+        manager.configurePushProvisioning(
+            activity = activity,
+            cardholderId = appCardholderId,
+            configuration = configuration,
+            completionHandler = completionHandler
+        )
+    }
+
     /**
      * Call this method to get the current digitization status
      * @param provisionToken - The provisioning token obtained from the card issuer.
      * */
+    fun configAndGetDigitizationState(
+        activity: android.app.Activity,
+        appCardholderId: String,
+        provisionToken: String,
+        completionHandler: DigitizationStateCompletion,
+        serviceRSAModulus: String
+    ) {
+        configCardManager(
+            activity = activity,
+            appCardholderId = appCardholderId,
+            serviceRSAModulus = serviceRSAModulus,
+            completionHandler = fun(result: Result<Unit>) {
+                Log.i("Config result", result.toString())
+                result.onSuccess {
+                    getDigitizationState(provisionToken, completionHandler = completionHandler)
+                }.onFailure {
+                    scope.launch(Dispatchers.Main) {
+                        completionHandler(Result.failure(it))
+                    }
+                }
+            })
+    }
+
     fun getDigitizationState(
         provisionToken: String,
         completionHandler: DigitizationStateCompletion
@@ -297,11 +346,11 @@ class EECardManager(
     private fun convertDigitizationState(digitizationState: DigitizationState): CardDigitizationState {
         when (digitizationState) {
             DigitizationState.DIGITIZED -> {
-                return CardDigitizationState.DIGITIZED;
+                return CardDigitizationState.DIGITIZED
             }
 
             DigitizationState.NOT_DIGITIZED -> {
-                return CardDigitizationState.NOT_DIGITIZED;
+                return CardDigitizationState.NOT_DIGITIZED
             }
 
             DigitizationState.DIGITIZATION_IN_PROGRESS -> {
@@ -325,7 +374,7 @@ class EECardManager(
      * PRODUCTION environment only
      *
      * */
-    fun provision(
+    fun configAndProvision(
         activity: android.app.Activity,
         appCardholderId: String,
         provisionToken: String,
@@ -348,46 +397,14 @@ class EECardManager(
             })
     }
 
-    private val serviceRSAExponent = "0x10001".toByteArray()
-    private val serviceURLPrd = "https://client-api.d1.thalescloud.io/"
-    private val digitalCardURLPrd = "https://hapi.dbp.thalescloud.io/mg/tpc/"
-    private val issuerID = "is_cko_oui"
 
-    private fun configCardManager(
+    fun doProvision(
         activity: android.app.Activity,
-        appCardholderId: String,
-        serviceRSAModulus: String,
-        completionHandler: (Result<Unit>) -> Unit
-    ) {
-        val configuration = ProvisioningConfiguration(
-            serviceRSAExponent = serviceRSAExponent,
-            serviceRSAModulus = serviceRSAModulus.toByteArray(),
-            serviceURL = serviceURLPrd,
-            digitalCardURL = digitalCardURLPrd,
-            issuerID = issuerID
-        )
-        manager.configurePushProvisioning(
-            activity = activity,
-            cardholderId = appCardholderId,
-            configuration = configuration,
-            completionHandler = completionHandler
-        )
-    }
-
-
-    private fun doProvision(
-        activity: android.app.Activity,
-        //   appCardholderId: String,
         provisionToken: String,
-        //    serviceRSAModulus:String,
         completionHandler: ValuelessCompletion
     ) {
-
-
         card?.provision(
             activity = activity,
-//            cardholderID = appCardholderId,
-//            configuration = configuration,
             token = provisionToken,
             completionHandler = fun(result: Result<Unit>) {
                 Log.i("Provision result", result.toString())
