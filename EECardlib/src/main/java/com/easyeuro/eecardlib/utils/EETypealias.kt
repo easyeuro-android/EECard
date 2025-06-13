@@ -7,3 +7,5 @@ typealias ValuelessCompletion = (result: Result<Unit>) -> Unit
 typealias SecureInfoCompletion = (result: Result<AbstractComposeView>) -> Unit
 
 typealias SecurePropertiesCompletion = (Result<Pair<AbstractComposeView, AbstractComposeView>>) -> Unit
+
+typealias DigitizationStateCompletion = (result: Result<CardDigitizationState>) -> Unit

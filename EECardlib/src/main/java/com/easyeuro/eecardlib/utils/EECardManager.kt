@@ -10,9 +10,11 @@ import androidx.compose.ui.unit.TextUnitType
 import com.checkout.cardmanagement.CheckoutCardManager
 import com.checkout.cardmanagement.model.Card
 import com.checkout.cardmanagement.model.CardManagementDesignSystem
+import com.checkout.cardmanagement.model.DigitizationState
 import com.checkout.cardmanagement.model.Environment
 import com.checkout.cardmanagement.model.ProvisioningConfiguration
 import com.checkout.cardmanagement.model.SecurePropertiesResult
+import com.checkout.cardmanagement.model.getDigitizationState
 import com.checkout.cardmanagement.model.getPANAndSecurityCode
 import com.checkout.cardmanagement.model.getPan
 import com.checkout.cardmanagement.model.getPin
@@ -37,19 +39,17 @@ class EECardManager(
 
 ) {
 
-    private val mContext: Context
+    private val mContext: Context = context
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private val manager: CheckoutCardManager
-    private val environment: Environment
+    private val environment: Environment = if (cardEnvironment == CardEnvironment.PRODUCTION) {
+        Environment.PRODUCTION
+    } else {
+        Environment.SANDBOX
+    }
     private var card: Card? = null
 
     init {
-        mContext = context
-        environment = if (cardEnvironment == CardEnvironment.PRODUCTION) {
-            Environment.PRODUCTION
-        } else {
-            Environment.SANDBOX
-        }
 
         manager =
             newCardManagement(mContext, newCardManagementDesignSystem(textStyle, panTextSeparator))
@@ -256,6 +256,65 @@ class EECardManager(
                     )
                 }
 
+        }
+
+    }
+
+    /**
+     * Call this method to get the current digitization status
+     * @param provisionToken - The provisioning token obtained from the card issuer.
+     * */
+    fun getDigitizationState(
+        provisionToken: String,
+        completionHandler: DigitizationStateCompletion
+    ) {
+        scope.launch(Dispatchers.Default) {
+            card?.getDigitizationState(provisionToken) { result: Result<DigitizationState> ->
+                result.onSuccess {
+                    scope.launch(Dispatchers.Main) {
+                        completionHandler(Result.success(convertDigitizationState(it)))
+                    }
+                }.onFailure {
+                    scope.launch(Dispatchers.Main) {
+                        completionHandler(Result.failure(it))
+                    }
+                }
+            }
+                ?: scope.launch(Dispatchers.Main) {
+                    completionHandler(
+                        Result.failure(
+                            Throwable(
+                                message = "Please initialize first!"
+                            )
+                        )
+                    )
+                }
+
+        }
+
+    }
+
+    private fun convertDigitizationState(digitizationState: DigitizationState): CardDigitizationState {
+        when (digitizationState) {
+            DigitizationState.DIGITIZED -> {
+                return CardDigitizationState.DIGITIZED;
+            }
+
+            DigitizationState.NOT_DIGITIZED -> {
+                return CardDigitizationState.NOT_DIGITIZED;
+            }
+
+            DigitizationState.DIGITIZATION_IN_PROGRESS -> {
+                return CardDigitizationState.DIGITIZATION_IN_PROGRESS;
+            }
+
+            DigitizationState.PENDING_IDV -> {
+                return CardDigitizationState.PENDING_IDV
+            }
+
+            else -> {
+                return CardDigitizationState.DIGITIZED
+            }
         }
 
     }
